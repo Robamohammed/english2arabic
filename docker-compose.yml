@@ -49,4 +49,6 @@ services:
 
 networks:
   Public_Network:
-  Private_Network:
+    - driver: bridge
+  Public_Network:
+    - driver: bridge
