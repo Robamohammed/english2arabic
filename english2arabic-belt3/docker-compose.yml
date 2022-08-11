@@ -28,7 +28,7 @@ services:
     ports:
       - "80:3000"
     networks:
-      - public
+      - Public
     volumes:
       - ./web:/web    
     depends_on:
@@ -43,7 +43,7 @@ services:
       POSTGRES_PASSWORD: "postgres"
       POSTGRES_DB: "postgresDB"
     networks:
-      - private
+      - Private
     volumes:
       - "/home/ubuntu/english2arabic/sql_scripts/:/docker-entrypoint-initdb.d"  
 
