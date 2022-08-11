@@ -1,17 +1,30 @@
 FROM node:10-alpine
+# add curl for healthcheck
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
+# Add Tini for proper init of signals
+ENV TINI_VERSION v0.19.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
 
-WORKDIR /home/node/app
+WORKDIR /app
+
+# have nodemon available for local dev use (file watching)
+RUN npm install -g nodemon
 
 COPY package*.json ./
 
-USER node
+RUN npm ci \
+ && npm cache clean --force \
+ && mv /app/node_modules /node_modules
 
-RUN npm install
+COPY . .
 
-COPY --chown=node:node . .
+ENV PORT 80
 
-EXPOSE 3001
+EXPOSE 80
 
-CMD [ "node", "app.js" ]
+CMD ["/tini", "--", "node", "server.js"]
